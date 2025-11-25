@@ -3,9 +3,9 @@ from bs4 import BeautifulSoup
 import time
 import telebot
 
-BOT_TOKEN = "ВАШ_ТОКЕН_ТУТ"
-CHANNEL_ID = "@ВАШ_КАНАЛ_ТУТ"
-SEARCH_URL = "https://realtor.ua/arenda-kvartir/?city=20"  # Дніпро
+BOT_TOKEN = "8431947947:AAF4P85SFCf5iCp7gE3cF1UuqwXcw7q69_o"
+CHANNEL_ID = "@orendadp"   # правильно
+SEARCH_URL = "https://rieltor.ua/dnepr/flats-rent/?price_min=13000&radius=20&sort=-default"
 
 bot = telebot.TeleBot(BOT_TOKEN)
 
@@ -27,12 +27,14 @@ def parse_realtor():
         link = item.select_one("a")
 
         if title and price and link:
-            url = "https://realtor.ua" + link["href"]
-            results.append({
-                "title": title.text.strip(),
-                "price": price.text.strip(),
-                "url": url
-            })
+            href = link.get("href")
+            if href:
+                url = "https://rieltor.ua" + href
+                results.append({
+                    "title": title.text.strip(),
+                    "price": price.text.strip(),
+                    "url": url
+                })
 
     return results
 
@@ -50,8 +52,7 @@ def main():
 
         for ad in ads:
             if ad["url"] not in sent_ads:
-                text = format_message(ad)
-                bot.send_message(CHANNEL_ID, text)
+                bot.send_message(CHANNEL_ID, format_message(ad))
                 sent_ads.add(ad["url"])
 
         time.sleep(300)
